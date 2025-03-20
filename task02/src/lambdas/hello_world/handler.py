@@ -1,3 +1,5 @@
+import json
+
 from commons.log_helper import get_logger
 from commons.abstract_lambda import AbstractLambda
 
@@ -14,8 +16,11 @@ class HelloWorld(AbstractLambda):
         Explain incoming event here
         """
         # todo implement business logic
-        path = event.requestContext.http.path
-        method = event.requestContext.http.method
+        # return json.dumps(event['requestContext'])
+        http = event['requestContext']['http']
+        path = http['path']
+        method = http['method']
+        # return http['path']=='/hello'
 
         if path == '/hello':
             return {
