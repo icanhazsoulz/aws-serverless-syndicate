@@ -25,11 +25,11 @@ class HelloWorld(AbstractLambda):
         if path == '/hello':
             return {
                 "statusCode": 200,
-                "message": "Hello from Lambda"
+                "body": json.dumps({"message": "Hello from Lambda"})
             }
         return {
             "statusCode": 400,
-            "message": f"Bad Request syntax or unsupported method. Request path: {path}. HTTP method: {method}"
+            "body": json.dumps({"message": f"Bad Request syntax or unsupported method. Request path: {path}. HTTP method: {method}"})
         }
 
 
