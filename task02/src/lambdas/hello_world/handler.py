@@ -14,8 +14,8 @@ class HelloWorld(AbstractLambda):
         Explain incoming event here
         """
         # todo implement business logic
-        path = event['path']
-        method = event['httpMethod']
+        path = event.requestContext.http.path
+        method = event.requestContext.http.method
 
         if path == '/hello':
             return {
