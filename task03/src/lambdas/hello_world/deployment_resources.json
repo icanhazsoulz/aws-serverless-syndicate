@@ -7,6 +7,5 @@
     ],
     "resource_type": "iam_role",
     "tags": {}
-  },
-  "enable_proxy": true
+  }
 }
