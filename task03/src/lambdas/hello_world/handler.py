@@ -18,7 +18,10 @@ class HelloWorld(AbstractLambda):
         # todo implement business logic
         return {
             "statusCode": 200,
-            "message": "Hello from Lambda"
+            "body": json.dumps({
+                "statusCode": 200,
+                "message": "Hello from Lambda"
+            })
         }
     
 
