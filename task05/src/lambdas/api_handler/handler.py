@@ -36,11 +36,11 @@ class ApiHandler(AbstractLambda):
                 "body": content
             }
 
-            table.put_item(Item=record)
+            response = table.put_item(Item=record)
 
             response = {
                 "statusCode": 201,
-                "body": json.dumps({"event": record})
+                "body": json.dumps({"event": response})
             }
             return response
         except Exception as e:
