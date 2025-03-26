@@ -4,7 +4,8 @@ from commons.abstract_lambda import AbstractLambda
 import uuid
 import json
 import boto3
-import datetime
+from datetime import datetime
+import os
 
 _LOG = get_logger(__name__)
 
@@ -15,12 +16,12 @@ class UuidGenerator(AbstractLambda):
         pass
         
     def handle_request(self, event, context):
-        s3 = boto3.client('s3')
-        BUCKET_NAME = 'uuid-storage'
+        s3 = boto3.resource('s3')
+        BUCKET_NAME = os.environ['bucket_name']
 
         try:
             uuid_list = [str(uuid.uuid4()) for _ in range(10)]
-            timestamp = datetime.datetime.now(datetime.UTC).isoformat()
+            timestamp = datetime.utcnow().isoformat()+'Z'
             filename = f"{timestamp}"
 
             file_content = json.dumps({"ids": uuid_list}, indent=4)
