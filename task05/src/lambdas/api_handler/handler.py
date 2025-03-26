@@ -3,7 +3,7 @@ from commons.abstract_lambda import AbstractLambda
 
 import json
 import uuid
-from datetime import datetime
+import datetime
 import os
 import boto3
 
@@ -16,8 +16,8 @@ class ApiHandler(AbstractLambda):
         pass
         
     def handle_request(self, event, context):
-        dynamodb = boto3.resource('dynamodb')
-        TABLENAME = 'Events'
+        dynamodb = boto3.resource('dynamodb', region_name=os.environ['region'])
+        TABLENAME = os.environ['target_table']
         table = dynamodb.Table(TABLENAME)
         try:
             body = json.loads(event['body'])
@@ -27,12 +27,12 @@ class ApiHandler(AbstractLambda):
                 return {"statusCode": 400, "body": json.dumps({"error": "Missing required fields"})}
 
             event_id = str(uuid.uuid4())
-            created_at = datetime.utcnow().isoformat()+'Z'
+            timestamp = datetime.datetime.now(datetime.UTC).isoformat()
 
             record = {
                 "id": event_id,
                 "principalId": principal_id,
-                "createdAt": created_at,
+                "createdAt": timestamp,
                 "body": content
             }
 
