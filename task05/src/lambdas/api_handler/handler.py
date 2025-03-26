@@ -34,11 +34,15 @@ class ApiHandler(AbstractLambda):
                 "body": content
             }
 
-            response = table.put_item(Item=item)
+            response_meta = table.put_item(Item=item)
 
             response = {
                 "statusCode": 201,
-                "body": json.dumps({"event": response})
+                "body": json.dumps({
+                    "statusCode": 201,
+                    "event": item,
+                    "meta": response_meta
+                })
             }
             return response
         except Exception as e:
