@@ -31,7 +31,7 @@ class AuditProducer(AbstractLambda):
                 audit_item = {
                     "id": str(uuid.uuid4()),
                     "itemKey": item_key,
-                    "modificationTime": datetime.utcnow().isoformat(timespec='milliseconds') + "Z",
+                    "modificationTime": datetime.utcnow().isoformat() + "Z",
                 }
 
                 if record['eventName'] == 'INSERT':
@@ -48,7 +48,7 @@ class AuditProducer(AbstractLambda):
                     audit_item.update({
                         'oldValue': old_value,
                         'newValue': new_value,
-                        'updated_attribute': 'value'
+                        'updatedAttribute': 'value'
                     })
 
                 audit_table.put_item(Item=audit_item)
