@@ -16,17 +16,22 @@ class UuidGenerator(AbstractLambda):
         pass
         
     def handle_request(self, event, context):
-        s3 = boto3.resource('s3')
-        BUCKET_NAME = os.environ['bucket_name']
-
         try:
-            uuid_list = [str(uuid.uuid4()) for _ in range(10)]
-            timestamp = datetime.utcnow().isoformat()+'Z'
-            filename = f"{timestamp}"
+            uuids = [str(uuid.uuid4()) for _ in range(10)]
+            data = {"ids": uuids}
+            json_data = json.dumps(data, indent=4)
 
-            file_content = json.dumps({"ids": uuid_list}, indent=4)
-            s3.put_object(Bucket=BUCKET_NAME, Key=filename, Body=file_content, ContentType='application/json')
-            return {"statusCode": 200, "body": "UUID file created successfully"}
+            filename = datetime.utcnow().isoformat(timespec='milliseconds') + 'Z'
+
+            s3 = boto3.client('s3')
+            BUCKET_NAME = os.environ['bucket_name']
+            s3.put_object(
+                Bucket=BUCKET_NAME,
+                Key=filename,
+                Body=json_data
+            )
+
+            return {"statusCode": 200, "body": json.dumps({"UUID file created successfully"})}
 
         except Exception as e:
             return {"statusCode": 500, "body": json.dumps({"error": str(e)})}
