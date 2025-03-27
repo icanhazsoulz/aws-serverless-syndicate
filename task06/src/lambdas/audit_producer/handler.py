@@ -12,16 +12,15 @@ _LOG = get_logger(__name__)
 
 class AuditProducer(AbstractLambda):
 
-    REGION=os.environ['region']
-    TABLE_NAME=os.environ['table_name']
-
-    dynamodb = boto3.resource('dynamodb', region_name=REGION)
-    audit_table = dynamodb.Table(TABLE_NAME)
-
     def validate_request(self, event) -> dict:
         pass
         
     def handle_request(self, event, context):
+        REGION = os.environ['region']
+        TABLE_NAME = os.environ['table_name']
+
+        dynamodb = boto3.resource('dynamodb', region_name=REGION)
+        audit_table = dynamodb.Table(TABLE_NAME)
         try:
             for record in event['Records']:
                 if record['eventName'] not in ['INSERT', 'MODIFY']:
@@ -48,10 +47,11 @@ class AuditProducer(AbstractLambda):
 
                     audit_item.update({
                         'oldValue': old_value,
-                        'newValue': new_value
+                        'newValue': new_value,
+                        'updated_attribute': 'value'
                     })
 
-                self.audit_table.put_item(Item=audit_item)
+                audit_table.put_item(Item=audit_item)
 
             return {
                 'statusCode': 200,
