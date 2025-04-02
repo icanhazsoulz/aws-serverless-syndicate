@@ -24,27 +24,35 @@ class Processor(AbstractLambda):
 
         try:
             response = requests.get(URL)
-            r = response.json()
+            # r = response.json()
+            # return {
+            #     'statusCode': 200,
+            #     'body': json.dumps(r)
+            # }
             item = {
                 "id": str(uuid.uuid4()),
-                "forecast": {
-                    "elevation": r['elevation'],
-                    "generationtime_ms": r['generationtime_ms'],
-                    "hourly": {
-                        "temperature_2m": r['hourly']['temperature_2m'],
-                        "time": r['hourly']['time'],
-                    },
-                    "hourly_units": {
-                        "temperature_2m": r['hourly_units']['temperature_2m'],
-                        "time": r['hourly_units']['time'],
-                    },
-                    "latitude": r['latitude'],
-                    "longitude": r['longitude'],
-                    "timezone": r['timezone'],
-                    "timezone_abbreviation": r['timezone_abbreviation'],
-                    "utc_offset_seconds": r['utc_offset_seconds']
-                }
+                "forecast": response.json()
             }
+            # item = {
+            #     "id": str(uuid.uuid4()),
+            #     "forecast": {
+            #         "elevation": r['elevation'],
+            #         "generationtime_ms": r['generationtime_ms'],
+            #         "hourly": {
+            #             "temperature_2m": r['hourly']['temperature_2m'],
+            #             "time": r['hourly']['time'],
+            #         },
+            #         "hourly_units": {
+            #             "temperature_2m": r['hourly_units']['temperature_2m'],
+            #             "time": r['hourly_units']['time'],
+            #         },
+            #         "latitude": r['latitude'],
+            #         "longitude": r['longitude'],
+            #         "timezone": r['timezone'],
+            #         "timezone_abbreviation": r['timezone_abbreviation'],
+            #         "utc_offset_seconds": r['utc_offset_seconds']
+            #     }
+            # }
 
             response_meta = table.put_item(Item=item)
 
