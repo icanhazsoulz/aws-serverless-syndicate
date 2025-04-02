@@ -2,7 +2,7 @@ from commons.log_helper import get_logger
 from commons.abstract_lambda import AbstractLambda
 
 import boto3
-from datetime import datetime
+from decimal import Decimal
 import json
 import os
 import requests
@@ -23,15 +23,14 @@ class Processor(AbstractLambda):
         table = dynamodb.Table(os.environ['table_name'])
 
         try:
-            response = requests.get(URL)
-            # r = response.json()
+            r = requests.get(URL)
             # return {
             #     'statusCode': 200,
             #     'body': json.dumps(r)
             # }
             item = {
                 "id": str(uuid.uuid4()),
-                "forecast": response.json()
+                "forecast": json.loads(r.json(), parse_float=Decimal)
             }
             # item = {
             #     "id": str(uuid.uuid4()),
