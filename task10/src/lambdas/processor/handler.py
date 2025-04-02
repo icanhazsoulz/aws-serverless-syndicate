@@ -11,6 +11,16 @@ import uuid
 _LOG = get_logger(__name__)
 
 
+def convert_floats_to_decimals(data):
+    if isinstance(data, list):
+        return [convert_floats_to_decimals(item) for item in data]
+    elif isinstance(data, dict):
+        return {k: convert_floats_to_decimals(v) for k, v in data.items()}
+    elif isinstance(data, float):
+        return Decimal(str(data))  # Convert float to string first to prevent precision issues
+    return data
+
+
 class Processor(AbstractLambda):
 
     def validate_request(self, event) -> dict:
@@ -24,34 +34,27 @@ class Processor(AbstractLambda):
 
         try:
             r = requests.get(URL)
-            # return {
-            #     'statusCode': 200,
-            #     'body': json.dumps(r)
-            # }
+            r = convert_floats_to_decimals(r.json())
             item = {
                 "id": str(uuid.uuid4()),
-                "forecast": json.loads(r.json(), parse_float=Decimal)
+                "forecast": {
+                    "elevation": r['elevation'],
+                    "generationtime_ms": r['generationtime_ms'],
+                    "hourly": {
+                        "temperature_2m": r['hourly']['temperature_2m'],
+                        "time": r['hourly']['time'],
+                    },
+                    "hourly_units": {
+                        "temperature_2m": r['hourly_units']['temperature_2m'],
+                        "time": r['hourly_units']['time'],
+                    },
+                    "latitude": r['latitude'],
+                    "longitude": r['longitude'],
+                    "timezone": r['timezone'],
+                    "timezone_abbreviation": r['timezone_abbreviation'],
+                    "utc_offset_seconds": r['utc_offset_seconds']
+                }
             }
-            # item = {
-            #     "id": str(uuid.uuid4()),
-            #     "forecast": {
-            #         "elevation": r['elevation'],
-            #         "generationtime_ms": r['generationtime_ms'],
-            #         "hourly": {
-            #             "temperature_2m": r['hourly']['temperature_2m'],
-            #             "time": r['hourly']['time'],
-            #         },
-            #         "hourly_units": {
-            #             "temperature_2m": r['hourly_units']['temperature_2m'],
-            #             "time": r['hourly_units']['time'],
-            #         },
-            #         "latitude": r['latitude'],
-            #         "longitude": r['longitude'],
-            #         "timezone": r['timezone'],
-            #         "timezone_abbreviation": r['timezone_abbreviation'],
-            #         "utc_offset_seconds": r['utc_offset_seconds']
-            #     }
-            # }
 
             response_meta = table.put_item(Item=item)
 
@@ -59,11 +62,12 @@ class Processor(AbstractLambda):
                 "statusCode": 200,
                 "body": json.dumps({
                     "statusCode": 200,
-                    "item": item
+                    "item": response_meta
                 })
             }
         except Exception as e:
             return {"statusCode": 500, "body": json.dumps({"error": str(e)})}
+
 
 HANDLER = Processor()
 
