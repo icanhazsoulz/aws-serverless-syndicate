@@ -31,7 +31,7 @@ class ApiHandler(AbstractLambda):
             "statusCode": 400,
             "body": json.dumps({
                 "statusCode": 400,
-                "message": f"Bad Request syntax or unsupported method. Request path: {path}. HTTP method: {method}"
+                "message": f"Bad request syntax or unsupported method. Request path: {path}. HTTP method: {method}"
             })
         }
 
