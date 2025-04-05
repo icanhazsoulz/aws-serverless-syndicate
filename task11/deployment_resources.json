@@ -49,7 +49,7 @@
     "client": {
       "client_name": "client-app",
       "generate_secret": false,
-      "explicit_auto_flows": [
+      "explicit_auth_flows": [
         "ALLOW_ADMIN_USER_PASSWORD_AUTH",
         "ALLOW_CUSTOM_AUTH",
         "ALLOW_USER_SRP_AUTH",
