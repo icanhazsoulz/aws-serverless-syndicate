@@ -40,8 +40,21 @@ class ApiHandler(AbstractLambda):
         email = body.get("email", "").strip()
         password = body.get("password", "").strip()
 
-        if not (first_name and last_name and re.fullmatch(EMAIL_REGEX, email)) and re.fullmatch(PASSWORD_REGEX, password):
-            return {"statusCode": 400, "body": json.dumps({"message": "Invalid input data"})}
+        errors = []
+        if not first_name:
+            errors.append("First name is required")
+        if not last_name:
+            errors.append("Last name is required")
+        if not re.fullmatch(EMAIL_REGEX, email):
+            errors.append("Invalid email format")
+        if not re.fullmatch(PASSWORD_REGEX, password):
+            errors.append("Password must be 12+ chars with letters, numbers, and symbols ($%^*_-)")
+
+        if errors:
+            return {
+                "statusCode": 400,
+                "body": json.dumps({"message": "Validation failed", "errors": errors})
+            }
 
         try:
             cognito_client.sign_up(
