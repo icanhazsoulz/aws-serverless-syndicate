@@ -53,7 +53,7 @@ class ApiHandler(AbstractLambda):
         if errors:
             return {
                 "statusCode": 400,
-                "body": json.dumps({"message": "Validation failed", "errors": errors})
+                "body": json.dumps({"statusCode": 400, "message": "Validation failed", "errors": errors})
             }
 
         try:
@@ -84,7 +84,7 @@ class ApiHandler(AbstractLambda):
         password = body.get("password", "").strip()
 
         if not email or not password:
-            return {"statusCode": 400, "body": json.dumps({"message": "Missing email or password"})}
+            return {"statusCode": 400, "body": json.dumps({"statusCode": 400, "message": "Missing email or password"})}
 
         try:
             response = cognito_client.initiate_auth(
