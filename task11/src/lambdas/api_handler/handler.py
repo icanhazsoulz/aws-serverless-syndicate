@@ -18,7 +18,7 @@ RESERVATIONS = os.environ['reservations_table']
 tables_table = dynamodb.Table(TABLES)
 reservations_table = dynamodb.Table(RESERVATIONS)
 
-PASSWORD_REGEX = r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$%^*\-_]).{12,}$"
+PASSWORD_REGEX = r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$%^*\-_])[A-Za-z\d$%^*\-_]{12,}$"
 EMAIL_REGEX = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
 
 class ApiHandler(AbstractLambda):
