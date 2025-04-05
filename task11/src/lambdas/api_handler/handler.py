@@ -35,25 +35,36 @@ class ApiHandler(AbstractLambda):
         if not body:
             return {"statusCode": 400, "body": json.dumps({"message": "Invalid request format"})}
 
-        first_name = body.get("firstName", "").strip()
-        last_name = body.get("lastName", "").strip()
-        email = body.get("email", "").strip()
-        password = body.get("password", "").strip()
+        first_name = body["firstName"].strip()
+        last_name = body["lastName"].strip()
+        email = body["email"].strip()
+        password = body["password"].strip()
 
-        errors = []
-        if not first_name:
-            errors.append("First name is required")
-        if not last_name:
-            errors.append("Last name is required")
-        if not re.fullmatch(EMAIL_REGEX, email):
-            errors.append("Invalid email format")
-        if not re.fullmatch(PASSWORD_REGEX, password):
-            errors.append("Password must be 12+ chars with letters, numbers, and symbols ($%^*_-)")
+        # errors = []
+        # if not first_name:
+        #     errors.append("First name is required")
+        # if not last_name:
+        #     errors.append("Last name is required")
+        # if not re.fullmatch(EMAIL_REGEX, email):
+        #     errors.append("Invalid email format")
+        # if not re.fullmatch(PASSWORD_REGEX, password):
+        #     errors.append("Password must be 12+ chars with letters, numbers, and symbols ($%^*_-)")
+        #
+        # if errors:
+        #     return {
+        #         "statusCode": 400,
+        #         "body": json.dumps({"statusCode": 400, "message": "Validation failed", "errors": errors})
+        #     }
 
-        if errors:
+        if (
+            not first_name
+            or not last_name
+            or not re.fullmatch(EMAIL_REGEX, email)
+            or not re.fullmatch(PASSWORD_REGEX, password)
+        ):
             return {
                 "statusCode": 400,
-                "body": json.dumps({"statusCode": 400, "message": "Validation failed", "errors": errors})
+                "body": json.dumps({"statusCode": 400, "message": "Invalid input data"})
             }
 
         try:
