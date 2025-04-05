@@ -19,7 +19,7 @@ tables_table = dynamodb.Table(TABLES)
 reservations_table = dynamodb.Table(RESERVATIONS)
 
 PASSWORD_REGEX = r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$%^*\-_]).{12,}$"
-EMAIL_REGEX = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+EMAIL_REGEX = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
 
 class ApiHandler(AbstractLambda):
 
@@ -40,7 +40,7 @@ class ApiHandler(AbstractLambda):
         email = body.get("email", "").strip()
         password = body.get("password", "").strip()
 
-        if not (first_name and last_name and re.match(EMAIL_REGEX, email)) and re.match(PASSWORD_REGEX, password):
+        if not (first_name and last_name and re.fullmatch(EMAIL_REGEX, email)) and re.fullmatch(PASSWORD_REGEX, password):
             return {"statusCode": 400, "body": json.dumps({"message": "Invalid input data"})}
 
         try:
